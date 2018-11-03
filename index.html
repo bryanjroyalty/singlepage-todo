@@ -1,0 +1,156 @@
+<html>
+    <head>
+        <title>test memory</title></head>
+
+<button onclick="handlers.toggleAll()">Toggle All</button>
+
+<div>
+    <input type="text" id="createDataInput">
+    <button onclick="handlers.createData()">Create</button>
+</div>
+
+<div>
+    <input type="text" id="toggleCompletedInput">
+    <button onclick="handlers.toggleCompleted()">Toggle Completed</button>
+</div>
+<div>
+    <input type="text" id="changeDataPositionInput">
+    <input type="text" id="changeDataTextInput">
+    <button onclick="handlers.changeData()">Change data</button>
+</div>
+
+<div>
+    <input type="text" id="deleteDataPositionInput">
+    <button onclick="handlers.deleteData()">Delete</button>
+</div>
+
+<div>
+    <ul></ul>
+</div>
+
+<body>
+
+<script>
+
+var listOfData = {
+    data: [],
+
+    createData: function(name){
+        this.data.push({dataName:name, completed:false});
+    },
+
+    deleteData: function(position){
+        this.data.splice(position, 1);
+    },
+
+    changeData: function(position, changedData){
+        this.data[position].dataName = changedData;
+    },
+
+    toggleCompleted: function(position){
+        this.data[position].completed = !this.data[position].completed;
+    },
+
+    toggleAll: function(){
+        var totalData = this.data.length;
+        var completedData = 0;
+        for (i=0; i<totalData; i++){
+            if (this.data[i].completed === true){
+                completedData++;
+            }
+        }
+        if (totalData === completedData){
+            for (i=0; i<totalData; i++){
+                this.data[i].completed = false;
+            }
+        } else {
+            for (i=0; i<totalData; i++){
+                this.data[i].completed = true;
+            }
+        }
+    },
+};
+
+var handlers = {
+    createData: function(){
+        var createDataInput = document.getElementById('createDataInput');
+        if (createDataInput.value === ""){
+            alert ('you must provide an input!')
+        } else {
+            listOfData.createData(createDataInput.value);
+            createDataInput.value ="";
+        };
+        view.displayData();
+    },
+
+    toggleCompleted: function(){
+        var toggleCompletedInput = document.getElementById('toggleCompletedInput');
+        if (toggleCompletedInput.value === ""){
+            alert("you must provide an input!")
+        } else {
+            listOfData.toggleCompleted(toggleCompletedInput.value);
+            toggleCompletedInput.value ="";
+        };
+        view.displayData();
+    },
+
+    toggleAll: function(){
+        listOfData.toggleAll();
+        view.displayData();
+    },
+
+    changeData: function(){
+        var changeDataPositionInput = document.getElementById('changeDataPositionInput');
+        var changeDataTextInput = document.getElementById('changeDataTextInput');
+        listOfData.changeData(changeDataPositionInput.value, changeDataTextInput.value);
+        changeDataPositionInput.value = "";
+        changeDataTextInput.value = "";
+        view.displayData();
+    }, 
+
+    deleteData: function(){
+        var deleteDataPositionInput = document.getElementById('deleteDataPositionInput');
+        if (deleteDataPositionInput.value !== ""){
+            listOfData.deleteData(deleteDataPositionInput.value);
+            deleteDataPositionInput.value = "";
+        };
+        view.displayData();
+    }
+};
+  
+var view = {
+    displayData: function(){
+        var dataUl = document.querySelector('ul');
+        dataUl.innerHTML = "";
+        for (i=0; i<listOfData.data.length; i++){
+            var dataLi = document.createElement('li');
+            var data = listOfData.data[i];
+            var dataTextforView = "";
+
+            if (data.completed === true) {
+                dataTextforView = "(x)" + data.dataName;
+            } else {
+                dataTextforView = "( )" + data.dataName;
+            }
+
+            dataLi.id = i;
+            dataLi.textContent = dataTextforView;
+            dataLi.appendChild(this.createDeleteButton());
+            dataUl.appendChild(dataLi);
+        }
+    },
+
+    createDeleteButton: function(){
+        var deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'deleteButton';
+        return deleteButton;
+    }
+};
+
+</script>
+</body>
+
+
+
+</html>
